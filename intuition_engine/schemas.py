@@ -50,11 +50,19 @@ class ValidationResult:
     warnings: List[str] = field(default_factory=list)
 
 @dataclass
+class ScalingFeatures:
+    natural_frequency: Optional[sp.Expr] = None
+    damping_ratio: Optional[sp.Expr] = None
+    forcing_ratio: Optional[sp.Expr] = None
+    notes: List[str] = field(default_factory=list)
+
+@dataclass
 class AnalysisReport:
     parsed: ParsedEquation
     classification: EquationClassification
     validation: ValidationResult
     features: ExtractedFeatures
+    scaling: ScalingFeatures
     regimes: List[RegimeInsight]
     math_summary: str
     physics_summary: str
