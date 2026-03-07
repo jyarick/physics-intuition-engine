@@ -1,14 +1,10 @@
-# Physics Intuition Engine v1
+# Physics Intuition Engine
 
-A symbolic equation-reading tool for second-order linear ODEs that extracts structure, characteristic scales, regime conditions, and intuition-oriented summaries.
-
-## Demo
-
-![Physics Intuition Engine demo](assets/physics-intuition-engine-demo.png)
+A symbolic equation-reading tool for ODEs and linear systems: it parses equations, extracts structure (coefficients, eigenvalues, eigenvectors), computes characteristic scales and regime conditions, and shows general solutions and physics-oriented summaries.
 
 ## What it does
 
-Given an equation such as
+**Single ODEs** — Given an equation such as
 
 $$
 m\ddot{x} + b\dot{x} + kx = F_0 \cos(\omega t),
@@ -16,53 +12,29 @@ $$
 
 the engine:
 
-- parses the equation into canonical form
-- classifies its mathematical structure
-- extracts coefficients and forcing terms
-- computes characteristic quantities such as
-  - discriminant
-  - natural frequency
-  - damping ratio
-  - damping timescale
-- identifies regime conditions such as
-  - overdamped
-  - critically damped
-  - underdamped
-  - low-frequency forcing
-  - near resonance
-  - high-frequency forcing
-- generates both
-  - a mathematical summary
-  - a physics / intuition summary
+- Parses the equation into canonical form
+- Classifies order, linearity, constant vs time-varying coefficients, forcing
+- Extracts coefficients and derived quantities (discriminant, natural frequency, damping ratio, timescales)
+- Identifies regime conditions (overdamped, critical, underdamped, resonance, etc.)
+- Computes a **general solution** (symbolic, no initial conditions)
+- Suggests **physical systems** the equation might represent
+- Produces mathematical and physics/intuition summaries
 
-## Current v1 scope
+**Systems of ODEs** — For a system in normal form (e.g. \(\dot{x} = -x + y\), \(\dot{y} = x - 2y\)), the engine:
 
-This version is intentionally scoped to:
+- Parses the system and builds the coefficient matrix \(A\) and vector \(\mathbf{b}\)
+- Computes **eigenvalues**, **eigenvectors**, **trace**, and **determinant**
+- Summarizes **stability** (stable node, spiral, saddle, etc.) and regime insights
+- Computes a **general solution** for the system
+- Suggests physical systems (coupled oscillators, predator–prey, etc.)
 
-$$
-a\,x'' + b\,x' + c\,x = f(t)
-$$
+## Scope
 
-with emphasis on **second-order linear constant-coefficient ODEs**.
-
-Supported examples include:
-
-- undamped oscillator
-- damped oscillator
-- driven damped oscillator
-- constant forcing cases
-
-The engine also provides validation warnings when an equation falls outside the current supported family.
-
-## Current limitations
-
-This is a v1 tool focused on second-order linear constant-coefficient ODEs.
-
-Known limitations:
-- support is intentionally restricted to a narrow equation family
-- regime thresholds are simplified in some places for clarity
-- forcing-frequency detection is basic
-- the current interface is notebook-based
+- **Single ODEs:** First- and second-order; linear (constant or time-varying coefficients) and nonlinear; with or without forcing.
+- **Systems:** Linear first-order systems in normal form (\(\mathbf{x}' = A\mathbf{x} + \mathbf{b}\)), with symbolic eigenvalues/eigenvectors when possible.
+- strongest support currently: first/second-order scalar ODEs and linear first-order systems
+- deepest interpretation currently: second-order linear oscillator-type equations and constant-coefficient linear systems
+- Input: one equation, or multiple equations separated by `;` or newline for systems.
 
 ## Project structure
 
@@ -70,29 +42,67 @@ Known limitations:
 physics_intuition_engine/
 ├── intuition_engine/
 │   ├── __init__.py
-│   ├── schemas.py
 │   ├── examples.py
-│   ├── parser.py
-│   ├── classifier.py
-│   ├── extractors.py
-│   ├── regimes.py
-│   ├── scaling.py
-│   ├── validation.py
-│   ├── explain.py
-│   └── pipeline.py
+│   ├── pipeline.py
+│   ├── ode/                    # Single ODEs
+│   │   ├── __init__.py
+│   │   ├── schemas.py
+│   │   ├── parser.py
+│   │   ├── classifier.py
+│   │   ├── extractors.py
+│   │   ├── regimes.py
+│   │   ├── scaling.py
+│   │   ├── validation.py
+│   │   ├── explain.py
+│   │   └── solution.py
+│   └── systems/                # Systems of ODEs (matrix, eigenvalues, eigenvectors)
+│       ├── __init__.py
+│       ├── schemas.py
+│       ├── parser.py
+│       └── extract.py
 ├── notebooks/
-│   └── v1_engine_playground.ipynb
+│   └── engine_playground.ipynb
 ├── tests/
-│   └── test_v1_cases.py
+│   └── test_cases.py
 ├── requirements.txt
 └── README.md
+```
 
 ## Installation
 
+Create and use a virtual environment (recommended), then install dependencies:
+
 ```bash
-python3 -m pip install -r requirements.txt
+python3 -m venv .venv
+source .venv/bin/activate   # On Windows: .venv\Scripts\activate
+pip install -r requirements.txt
 ```
+
+Run the notebook from the project root (so imports resolve):
+
+```bash
+jupyter notebook notebooks/engine_playground.ipynb
+```
+
+## Usage
+
+From Python:
+
+```python
+from intuition_engine.pipeline import analyze_equation
+
+# Single ODE
+report = analyze_equation("m*diff(x(t), t, 2) + b*diff(x(t), t) + k*x(t) = F0*cos(omega*t)")
+# report.parsed, report.classification, report.features, report.regimes, report.solution, report.physical_systems
+
+# System
+report = analyze_equation("diff(x(t), t) = -x + y; diff(y(t), t) = x - 2*y")
+# report.system_info.matrix_A, .eigenvalues, .eigenvectors, .trace, .determinant, .stability_summary
+# report.solution  # general solution
+```
+
+Or use the notebook UI: paste an equation (or system, separated by `;`), then click **Analyze Equation**.
+
 ## Why this project exists
 
-Many students learn how to manipulate equations without learning how to read them physically. 
-This project aims to bridge that gap by turning equations into structured intuition.
+Many students learn to manipulate equations without learning to read them physically. This project turns equations into structured intuition: scales, regimes, stability, and what the equation might represent in the real world.
