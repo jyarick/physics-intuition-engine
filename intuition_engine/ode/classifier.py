@@ -67,7 +67,7 @@ def classify_equation(parsed: ParsedEquation) -> EquationClassification:
         if order == 2:
             if const_coeffs:
                 family = "second_order_linear_constant_coeff_ode"
-                notes.append("Equation matches the v1 family and includes forcing/input." if forced else "Equation matches the v1 family and is homogeneous.")
+                notes.append("Equation matches the recognized second-order linear constant-coefficient family and includes forcing/input." if forced else "Equation matches the recognized second-order linear constant-coefficient family and is homogeneous.")
             else:
                 family = "second_order_linear_time_varying_coeff_ode"
                 notes.append("Equation is second-order linear but has coefficients that depend on time.")

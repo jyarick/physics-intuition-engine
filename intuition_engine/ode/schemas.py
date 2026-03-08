@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Optional, List, Any
+from typing import Optional, List, Any, Literal
 import sympy as sp
 
 
@@ -47,7 +47,9 @@ class RegimeInsight:
 
 @dataclass
 class ValidationResult:
+    """support_level: full = full interpretation; partial = recognized but limited; unrecognized = no family."""
     is_supported: bool
+    support_level: Literal["full", "partial", "unrecognized"] = "unrecognized"
     warnings: List[str] = field(default_factory=list)
 
 
@@ -73,3 +75,4 @@ class AnalysisReport:
     parsed_system: Optional[Any] = None
     system_info: Optional[Any] = None
     solution: Optional[Any] = None  # general solution: Eq, list of Eq, or message str
+    solution_error: Optional[str] = None  # reason solution is None when attempt was made

@@ -30,11 +30,9 @@ the engine:
 
 ## Scope
 
-- **Single ODEs:** First- and second-order; linear (constant or time-varying coefficients) and nonlinear; with or without forcing.
-- **Systems:** Linear first-order systems in normal form (\(\mathbf{x}' = A\mathbf{x} + \mathbf{b}\)), with symbolic eigenvalues/eigenvectors when possible.
-- strongest support currently: first/second-order scalar ODEs and linear first-order systems
-- deepest interpretation currently: second-order linear oscillator-type equations and constant-coefficient linear systems
-- Input: one equation, or multiple equations separated by `;` or newline for systems.
+- **Strongest support:** second-order linear constant-coefficient ODEs; linear first-order systems in normal form.
+- **Recognized with partial interpretation:** first-order linear (constant or time-varying), second-order time-varying, nonlinear.
+- **Input:** one equation, or multiple equations separated by `;` or newline for systems.
 
 ## Project structure
 

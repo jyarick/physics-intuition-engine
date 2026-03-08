@@ -62,7 +62,7 @@ def analyze_equation(equation_str: str) -> AnalysisReport:
                 family="linear_system_constant_coeff_ode",
                 notes=["System of first-order linear ODEs in normal form."],
             )
-            validation = ValidationResult(is_supported=True, warnings=[])
+            validation = ValidationResult(is_supported=True, support_level="full", warnings=[])
             features = ExtractedFeatures()
             scaling = ScalingFeatures()
             regimes = [RegimeInsight("System insight", insight, insight) for insight in sys_info.regime_insights]
@@ -71,7 +71,7 @@ def analyze_equation(equation_str: str) -> AnalysisReport:
             math_summary = f"System: d(state)/dt = A state + b. Eigenvalues: {sys_info.eigenvalues}. {sys_info.stability_summary}"
             physics_summary = sys_info.stability_summary + "\n" + "\n".join(sys_info.regime_insights)
             physical_systems = build_physical_systems_for_system()
-            solution = solve_system(parsed_sys)
+            solution, solution_error = solve_system(parsed_sys)
             return AnalysisReport(
                 parsed=parsed,
                 classification=classification,
@@ -85,6 +85,7 @@ def analyze_equation(equation_str: str) -> AnalysisReport:
                 parsed_system=parsed_sys,
                 system_info=sys_info,
                 solution=solution,
+                solution_error=solution_error,
             )
         except ValueError:
             # Fall through to single-equation parsing
@@ -99,7 +100,7 @@ def analyze_equation(equation_str: str) -> AnalysisReport:
     regimes = build_regime_insights(features, classification)
     math_summary, physics_summary = build_full_summaries(parsed, classification, features, regimes)
     physical_systems = build_physical_systems(classification)
-    solution = solve_ode(parsed)
+    solution, solution_error = solve_ode(parsed)
     return AnalysisReport(
         parsed=parsed,
         classification=classification,
@@ -111,6 +112,7 @@ def analyze_equation(equation_str: str) -> AnalysisReport:
         math_summary=math_summary,
         physics_summary=physics_summary,
         solution=solution,
+        solution_error=solution_error,
     )
 
 
